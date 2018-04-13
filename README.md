@@ -1,4 +1,4 @@
-## GraphQL Type
+## graphql-type
 
 Helps to create graphql types fast, and to validate input or output (or both) data.
 
