@@ -115,27 +115,15 @@ describe('Input-only validation direction', function () {
   it('should NOT validate output', async () => {
     result = await query(`{ testIntInputOnlyType(int: 60) }`)
     expect(result.data.testIntInputOnlyType).to.equal('not int')
+    expect(result.errors).to.equal(undefined)
   })
 })
 
 describe('Output-only validation direction', function () {
-  it('should validate output', async () => {
-    result = await query(`{ testIntOutputOnlyType(int: 99) }`)
-    expect(result.data.testIntOutputOnlyType).to.equal(null)
-    expect(result.errors[0].message).to.match(/min error$/)
-  })
-
-  it('should NOT validate input', async () => {
-    result = await query(`{ testIntOutputOnlyType(int: "not int") }`)
-    expect(result.data.testIntOutputOnlyType).to.equal(null)
-    // GraphQL cannot process NaN, so it run "serialize" function
-    expect(result.errors).to.equal(undefined)
-  })
-
-  it('should sum the result', async () => {
-    result = await query(`{ testIntOutputOnlyType(int: 40) }`)
-    expect(result.data.testIntOutputOnlyType).to.equal(60)
-    expect(result.errors).to.equal(undefined)
+  it('should NOT allow input', async () => {
+    result = await query(`{ testIntOutputOnlyType(int: 60) }`)
+    expect(result.errors[0].message).to.match(/must be Output Type but got input/)
+    expect(result.data).to.equal(undefined)
   })
 })
 

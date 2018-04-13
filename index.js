@@ -108,7 +108,7 @@ const assertFloat = (value, attrs) => {
 }
 
 const createScalarType = (attrs, handler) => {
-  const direction = attrs.direction || DIRECTION_INPUT
+  const direction = attrs.direction || DIRECTION_BOTH
   return new GraphQLScalarType({
     name: attrs.name,
     description: attrs.description,
@@ -124,13 +124,14 @@ const createScalarType = (attrs, handler) => {
       if (direction === DIRECTION_INPUT || direction === DIRECTION_BOTH) {
         return handler(value, attrs)
       }
-      return value
+      throw new GraphQLTypeError(`"${attrs.name}" type must be Output Type but got input.`)
     },
     // Gets invoked to parse client input that was passed inline in the query.
     parseLiteral (ast) {
       if (direction === DIRECTION_INPUT || direction === DIRECTION_BOTH) {
         return handler(ast.value, attrs, ast)
       }
+      throw new GraphQLTypeError(`"${attrs.name}" type must be Output Type but got input.`)
       return ast.value
     }
   })

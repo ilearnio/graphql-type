@@ -36,12 +36,12 @@ module.exports = new GraphQLSchema({
       testIntInputOnlyType: {
         type: IntInputType,
         args: { int: { type: IntInputType } },
-        resolve: () => 'not int' // wrong, but should not be validated
+        resolve: () => 'not int'
       },
       testIntOutputOnlyType: {
         type: IntOutputType,
         args: { int: { type: IntOutputType } },
-        resolve: (_, { int }) => 100 - int
+        resolve: () => 100
       },
       testIntBiDirectionalType: {
         type: IntBiDirectionalType,
