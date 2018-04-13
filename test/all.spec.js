@@ -1,8 +1,10 @@
 /* eslint-env mocha */
 
+const { AssertionError } = require('assert')
 const { expect } = require('chai')
 const { graphql } = require('graphql')
 const schema = require('./schema')
+const { createIntType } = require('..')
 
 const query = (queryStr, variables) => {
   return graphql(schema, queryStr, null, null, variables)
@@ -139,6 +141,17 @@ describe('Bi-directional validation', function () {
     expect(result.data.testIntBiDirectionalType).to.equal(9)
     // TODO: currently error is only logged to terminal
     // expect(result.errors[0].message).to.match(/min error$/)
+  })
+})
+
+describe('Type creators', function () {
+  it('should require "name" attribute', () => {
+    expect(() => createIntType({ })).to.throw(AssertionError, 'Must provide name.')
+  })
+
+  it('should throw on unknown attribute', () => {
+    expect(() => createIntType({ name: 'Foo', bar: 1 })).to.throw(AssertionError,
+      'Unknown attribute "bar" set for "Foo" type.')
   })
 })
 

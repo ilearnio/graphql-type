@@ -5,7 +5,7 @@
 
 Helps to create graphql types easily with validation of input or output (or both) values.
 
-In most cases you would want to performs bi-directional validation of data, so that invalid input value will result in an error response, whereas in case of invalid output it will still **always** return the value but will also let you know of the error.
+In most cases you would want to performs bi-directional validation of data, so that invalid input value will result in an error response, whereas in case of invalid output it will **always** return the value but will also let you know of the error.
 
 For bi-direction validation use function like `createStringType`. For uni-directional validation use `createStringInputType` or `createStringOutputType`.
 

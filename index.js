@@ -1,3 +1,4 @@
+const assert = require('assert')
 const { GraphQLScalarType } = require('graphql')
 const { GraphQLError } = require('graphql/error')
 
@@ -142,13 +143,28 @@ const createScalarType = (attrs, handler, direction = DIRECTION_BOTH) => {
   })
 }
 
+/**
+ * Asserts root attributes passed to the type creator function.
+ */
+const assertRootAttrs = (attrs) => {
+  const allowedAttrs = ['name', 'description', 'validate', 'validationMessages']
+  assert(!!attrs.name, 'Must provide name.')
+  Object.keys(attrs).forEach(attr => {
+    assert(allowedAttrs.includes(attr),
+      `Unknown attribute "${attr}" set for "${attrs.name}" type.`)
+  })
+}
+
 //
 // String
 //
 
-const stringTypeHandler = (attrs) => (value) => {
-  assertString(value, attrs)
-  return value
+const stringTypeHandler = (attrs) => {
+  assertRootAttrs(attrs)
+  return (value) => {
+    assertString(value, attrs)
+    return value
+  }
 }
 
 const createStringType = (attrs) => {
@@ -167,9 +183,12 @@ const createStringOutputType = (attrs) => {
 // Int
 //
 
-const intTypeHandler = (attrs) => (value) => {
-  assertInt(value, attrs)
-  return Number(value)
+const intTypeHandler = (attrs) => {
+  assertRootAttrs(attrs)
+  return (value) => {
+    assertInt(value, attrs)
+    return Number(value)
+  }
 }
 
 const createIntType = (attrs) => {
@@ -188,9 +207,12 @@ const createIntOutputType = (attrs) => {
 // Float
 //
 
-const floatTypeHandler = (attrs) => (value) => {
-  assertFloat(value, attrs)
-  return Number(value)
+const floatTypeHandler = (attrs) => {
+  assertRootAttrs(attrs)
+  return (value) => {
+    assertFloat(value, attrs)
+    return Number(value)
+  }
 }
 
 const createFloatType = (attrs) => {
