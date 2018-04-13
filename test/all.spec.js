@@ -134,10 +134,11 @@ describe('Bi-directional validation', function () {
     expect(result.errors[0].message).to.match(/min error$/)
   })
 
-  it('should validate output', async () => {
+  it('should always return value, even on output validation error', async () => {
     result = await query(`{ testIntBiDirectionalType(int: 91) }`)
-    expect(result.data.testIntBiDirectionalType).to.equal(null)
-    expect(result.errors[0].message).to.match(/min error$/)
+    expect(result.data.testIntBiDirectionalType).to.equal(9)
+    // TODO: currently error is only logged to terminal
+    // expect(result.errors[0].message).to.match(/min error$/)
   })
 })
 

@@ -107,16 +107,22 @@ const assertFloat = (value, attrs) => {
   }
 }
 
-const createScalarType = (attrs, handler) => {
-  const direction = attrs.direction || DIRECTION_BOTH
+const createScalarType = (attrs, handler, direction = DIRECTION_BOTH) => {
   return new GraphQLScalarType({
     name: attrs.name,
     description: attrs.description,
     // Gets invoked when serializing the result to send it back to the client.
     serialize (value) {
       if (direction === DIRECTION_OUTPUT || direction === DIRECTION_BOTH) {
-        return handler(value, attrs)
+        // TODO: think of a solution to not swallow the error, but proceed it
+        // with response
+        try {
+          return handler(value, attrs)
+        } catch (e) {
+          console.error(e)
+        }
       }
+      // Always push forward the output, even on error
       return value
     },
     // Gets invoked to parse client input that was passed through variables.
@@ -132,30 +138,71 @@ const createScalarType = (attrs, handler) => {
         return handler(ast.value, attrs, ast)
       }
       throw new GraphQLTypeError(`"${attrs.name}" type must be Output Type but got input.`)
-      return ast.value
     }
   })
 }
 
+//
+// String
+//
+
+const stringTypeHandler = (attrs) => (value) => {
+  assertString(value, attrs)
+  return value
+}
+
 const createStringType = (attrs) => {
-  return createScalarType(attrs, (value) => {
-    assertString(value, attrs)
-    return value
-  })
+  return createScalarType(attrs, stringTypeHandler(attrs), DIRECTION_BOTH)
+}
+
+const createStringInputType = (attrs) => {
+  return createScalarType(attrs, stringTypeHandler(attrs), DIRECTION_INPUT)
+}
+
+const createStringOutputType = (attrs) => {
+  return createScalarType(attrs, stringTypeHandler(attrs), DIRECTION_OUTPUT)
+}
+
+//
+// Int
+//
+
+const intTypeHandler = (attrs) => (value) => {
+  assertInt(value, attrs)
+  return Number(value)
 }
 
 const createIntType = (attrs) => {
-  return createScalarType(attrs, (value) => {
-    assertInt(value, attrs)
-    return Number(value)
-  })
+  return createScalarType(attrs, intTypeHandler(attrs), DIRECTION_BOTH)
+}
+
+const createIntInputType = (attrs) => {
+  return createScalarType(attrs, intTypeHandler(attrs), DIRECTION_INPUT)
+}
+
+const createIntOutputType = (attrs) => {
+  return createScalarType(attrs, intTypeHandler(attrs), DIRECTION_OUTPUT)
+}
+
+//
+// Float
+//
+
+const floatTypeHandler = (attrs) => (value) => {
+  assertFloat(value, attrs)
+  return Number(value)
 }
 
 const createFloatType = (attrs) => {
-  return createScalarType(attrs, (value) => {
-    assertFloat(value, attrs)
-    return Number(value)
-  })
+  return createScalarType(attrs, floatTypeHandler(attrs), DIRECTION_BOTH)
+}
+
+const createFloatInputType = (attrs) => {
+  return createScalarType(attrs, floatTypeHandler(attrs), DIRECTION_INPUT)
+}
+
+const createFloatOutputType = (attrs) => {
+  return createScalarType(attrs, floatTypeHandler(attrs), DIRECTION_OUTPUT)
 }
 
 exports.DIRECTION_INPUT = DIRECTION_INPUT
@@ -166,5 +213,11 @@ exports.GraphQLTypeError = GraphQLTypeError
 
 exports.createScalarType = createScalarType
 exports.createStringType = createStringType
+exports.createStringInputType = createStringInputType
+exports.createStringOutputType = createStringOutputType
 exports.createIntType = createIntType
+exports.createIntInputType = createIntInputType
+exports.createIntOutputType = createIntOutputType
 exports.createFloatType = createFloatType
+exports.createFloatInputType = createFloatInputType
+exports.createFloatOutputType = createFloatOutputType

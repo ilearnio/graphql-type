@@ -3,7 +3,11 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 
-Helps to create graphql types fast, and to validate input or output (or both) data.
+Helps to create graphql types easily with validation of input or output (or both) values.
+
+In most cases you would want to performs bi-directional validation of data, so that invalid input value will result in an error response, whereas in case of invalid output it will still **always** return the value but will also let you know of the error.
+
+For bi-direction validation use function like `createStringType`. For uni-directional validation use `createStringInputType` or `createStringOutputType`.
 
 ##### Strings
 
@@ -33,9 +37,7 @@ const EmailInputType = createStringType({
   validationMessages: {
     min: 'Email should have at least 5 characters.',
     test: 'Test domains are not allowed.'
-  },
-  // Validate input or output data? (default is 'input')
-  direction: 'input' // 'input', 'output', 'both'
+  }
 })
 ```
 
@@ -57,9 +59,7 @@ const MyInt = createIntType({
     test: function ...,
   },
   // Custom error messages
-  validationMessages: { ... },
-  // Validate input or output data? (default is 'input')
-  direction: 'input' // 'input', 'output', 'both'
+  validationMessages: { ... }
 })
 ```
 
@@ -84,42 +84,28 @@ const MyFloat = createFloatType({
     test: function ...,
   },
   // Custom error messages
-  validationMessages: { ... },
-  // Validate input or output data? (default is 'input')
-  direction: 'input' // 'input', 'output', 'both'
+  validationMessages: { ... }
 })
 ```
 
-##### Scalar type
-
-If none of the above satisfy your needs, you can create your own Scalar type (`GraphQLScalarType`) using `createScalarType`:
+Available helper functions:
 
 ```js
-const { GraphQLError } = require('graphql/error')
-const { createScalarType, DIRECTION_OUTPUT } = require('graphql-type')
+// Strings
+createStringType(attrs)
+createStringInputType(attrs)
+createStringOutputType(attrs)
 
-const MuliplyNumberType = createScalarType({
-  name: 'MuliplyNumberType',
-  direction: DIRECTION_OUTPUT,
-  // custom attributes
-  multiplyBy: 10
-}, function handler (value, attrs, ast) {
-  // Do some assertions
-  if (isNaN(value) || ast) {
-    throw new GraphQLError(`Expecting numeric value.`)
-  }
-  if (value < 5) {
-    throw new GraphQLError(`Value must be more then 5.`)
-  }
+// Integers
+createIntType(attrs)
+createIntInputType(attrs)
+createIntOutputType(attrs)
 
-  // It's up to you what will be the result value.
-  return value * attrs.multiplyBy
-})
+// Floats
+createFloatType(attrs)
+createFloatInputType(attrs)
+createFloatOutputType(attrs)
 ```
-
-##### Useful Constants
-
-For `direction` you can also use the following constants: `DIRECTION_INPUT`, `DIRECTION_OUTPUT`, `DIRECTION_BOTH`
 
 [npm-image]: https://img.shields.io/npm/v/graphql-type.svg
 [npm-url]: https://npmjs.org/package/graphql-type

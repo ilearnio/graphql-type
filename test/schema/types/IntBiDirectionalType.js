@@ -1,4 +1,4 @@
-const { createIntType, DIRECTION_BOTH } = require('../../..')
+const { createIntType } = require('../../..')
 
 module.exports = createIntType({
   name: 'IntBiDirectionalType',
@@ -14,6 +14,5 @@ module.exports = createIntType({
     min: 'min error',
     max: 'max error',
     test: 'test error'
-  },
-  direction: DIRECTION_BOTH
+  }
 })

@@ -1,6 +1,6 @@
-const { createIntType, DIRECTION_OUTPUT } = require('../../..')
+const { createIntOutputType } = require('../../..')
 
-module.exports = createIntType({
+module.exports = createIntOutputType({
   name: 'IntOutputType',
   validate: {
     min: 10,
@@ -14,6 +14,5 @@ module.exports = createIntType({
     min: 'min error',
     max: 'max error',
     test: 'test error'
-  },
-  direction: DIRECTION_OUTPUT
+  }
 })

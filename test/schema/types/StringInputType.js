@@ -1,6 +1,6 @@
-const { createStringType } = require('../../..')
+const { createStringInputType } = require('../../..')
 
-module.exports = createStringType({
+module.exports = createStringInputType({
   name: 'StringInputType',
   validate: {
     min: 5,
