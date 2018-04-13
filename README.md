@@ -1,5 +1,8 @@
 ## graphql-type
 
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+
 Helps to create graphql types fast, and to validate input or output (or both) data.
 
 ##### Strings
@@ -117,3 +120,8 @@ const MuliplyNumberType = createScalarType({
 ##### Useful Constants
 
 For `direction` you can also use the following constants: `DIRECTION_INPUT`, `DIRECTION_OUTPUT`, `DIRECTION_BOTH`
+
+[npm-image]: https://img.shields.io/npm/v/graphql-type.svg
+[npm-url]: https://npmjs.org/package/graphql-type
+[travis-image]: https://img.shields.io/travis/ilearnio/graphql-type/master.svg
+[travis-url]: https://travis-ci.org/ilearnio/graphql-type
