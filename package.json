@@ -1,7 +1,7 @@
 {
   "name": "graphql-type",
   "description": "Create GraphQL types with ease.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": {
     "name": "Nick Gavrilov",
     "email": "artnikpro@gmail.com"

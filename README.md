@@ -14,11 +14,11 @@ For bi-direction validation use function like `createStringType`. For uni-direct
 ```js
 const { createStringType } = require('graphql-type')
 
-const EmailInputType = createStringType({
+const EmailType = createStringType({
   // Name of the type
-  name: 'EmailInputType',
+  name: 'EmailType',
   // Description
-  description: 'Validates email.', // (optional)
+  description: 'Email with validation rules.', // (optional)
   // Validation rules
   validate: {
     // Min length
