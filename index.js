@@ -1,3 +1,4 @@
+const typeOf = require('just-typeof')
 const assert = require('assert')
 const { GraphQLScalarType } = require('graphql')
 const { GraphQLError } = require('graphql/error')
@@ -17,7 +18,7 @@ const assertString = (value, attrs) => {
   const { min, max, regexp, test } = validate || {}
 
   const defaultMessages = {
-    type: `Expecting "${name}" to be string.`,
+    type: `Expecting "${name}" to be a string but ${typeOf(value)} was passed.`,
     min: `Minimum length for "${name}" is ${min}.`,
     max: `Maximum length for "${name}" is ${max}.`,
     regexp: `"${name}" is invalid.`,
@@ -47,7 +48,7 @@ const assertInt = (value, attrs) => {
   const { min, max, test } = validate || {}
 
   const defaultMessages = {
-    type: `Expecting "${name}" to be integer.`,
+    type: `Expecting "${name}" to be an integer but ${typeOf(value)} was passed.`,
     min: `Minimum number for "${name}" is ${min}.`,
     max: `Maximum number for "${name}" is ${max}.`,
     test: `"${name}" is invalid.`
@@ -75,7 +76,7 @@ const assertFloat = (value, attrs) => {
   const { min, max, minDecimals, maxDecimals, test } = validate || {}
 
   const defaultMessages = {
-    type: `Expecting "${name}" to be float number.`,
+    type: `Expecting "${name}" to be a float but ${typeOf(value)} was passed.`,
     min: `Minimum number for "${name}" is ${min}.`,
     max: `Maximum number for "${name}" is ${max}.`,
     minDecimals: `The float number "${name}" should have at least ${minDecimals} decimals.`,
@@ -115,8 +116,6 @@ const createScalarType = (attrs, handler, direction = DIRECTION_BOTH) => {
     // Gets invoked when serializing the result to send it back to the client.
     serialize (value) {
       if (direction === DIRECTION_OUTPUT || direction === DIRECTION_BOTH) {
-        // TODO: think of a solution to not swallow the error, but proceed it
-        // with response
         try {
           return handler(value, attrs)
         } catch (e) {
