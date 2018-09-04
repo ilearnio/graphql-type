@@ -77,8 +77,6 @@ const MyFloat = createFloatType({
     // Max number
     max: 100,
     // Max decimal characters length
-    minDecimals: 2,
-    // Max decimal characters length
     maxDecimals: 4,
     // Custom validation function
     test: function ...,

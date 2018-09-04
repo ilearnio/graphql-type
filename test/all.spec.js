@@ -85,11 +85,6 @@ describe('FloatInputType', function () {
     expect(result.errors[0].message).to.match(/max error$/)
   })
 
-  it('should validate "minDecimals"', async () => {
-    result = await query(`{ testFloatInputType(int: 15.5) }`)
-    expect(result.errors[0].message).to.match(/minDecimals error$/)
-  })
-
   it('should validate "maxDecimals"', async () => {
     result = await query(`{ testFloatInputType(int: 15.12345) }`)
     expect(result.errors[0].message).to.match(/test error$/)

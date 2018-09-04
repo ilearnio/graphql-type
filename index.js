@@ -73,13 +73,12 @@ const assertInt = (value, attrs) => {
 
 const assertFloat = (value, attrs) => {
   const { name, validate, validationMessages } = attrs
-  const { min, max, minDecimals, maxDecimals, test } = validate || {}
+  const { min, max, maxDecimals, test } = validate || {}
 
   const defaultMessages = {
     type: `Expecting "${name}" to be a float but ${typeOf(value)} was passed.`,
     min: `Minimum number for "${name}" is ${min}.`,
     max: `Maximum number for "${name}" is ${max}.`,
-    minDecimals: `The float number "${name}" should have at least ${minDecimals} decimals.`,
     maxDecimals: `The float number "${name}" should not exceed ${maxDecimals} decimals.`,
     test: `"${name}" is invalid.`
   }
@@ -97,9 +96,6 @@ const assertFloat = (value, attrs) => {
   }
   if (max && value > max) {
     throw new GraphQLTypeError(messages.max)
-  }
-  if (minDecimals && decimals.length < minDecimals) {
-    throw new GraphQLTypeError(messages.minDecimals)
   }
   if (maxDecimals && decimals.length > maxDecimals) {
     throw new GraphQLTypeError(messages.maxDecimals)
