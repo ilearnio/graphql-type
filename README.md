@@ -37,6 +37,10 @@ const EmailType = createStringType({
   validationMessages: {
     min: 'Email should have at least 5 characters.',
     test: 'Test domains are not allowed.'
+  },
+  // Allows to modify or log (or whatnot) the value
+  resolve (value) {
+    return value
   }
 })
 ```
@@ -59,7 +63,11 @@ const MyInt = createIntType({
     test: function ...,
   },
   // Custom error messages
-  validationMessages: { ... }
+  validationMessages: { ... },
+  // Allows to modify or log (or whatnot) the value
+  resolve (value) {
+    return value
+  }
 })
 ```
 
@@ -82,7 +90,11 @@ const MyFloat = createFloatType({
     test: function ...,
   },
   // Custom error messages
-  validationMessages: { ... }
+  validationMessages: { ... },
+  // Allows to modify or log (or whatnot) the value
+  resolve (value) {
+    return value
+  }
 })
 ```
 

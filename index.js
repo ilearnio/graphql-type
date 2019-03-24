@@ -142,7 +142,7 @@ const createScalarType = (attrs, handler, direction = DIRECTION_BOTH) => {
  * Asserts root attributes passed to the type creator function.
  */
 const assertRootAttrs = (attrs) => {
-  const allowedAttrs = ['name', 'description', 'validate', 'validationMessages']
+  const allowedAttrs = ['name', 'description', 'validate', 'validationMessages', 'resolve']
   assert(!!attrs.name, 'Must provide name.')
   Object.keys(attrs).forEach(attr => {
     assert(allowedAttrs.includes(attr),
@@ -158,6 +158,9 @@ const stringTypeHandler = (attrs) => {
   assertRootAttrs(attrs)
   return (value) => {
     assertString(value, attrs)
+    if (typeof attrs.resolve === 'function') {
+      return attrs.resolve(value)
+    }
     return value
   }
 }
@@ -182,6 +185,9 @@ const intTypeHandler = (attrs) => {
   assertRootAttrs(attrs)
   return (value) => {
     assertInt(value, attrs)
+    if (typeof attrs.resolve === 'function') {
+      return attrs.resolve(value)
+    }
     return Number(value)
   }
 }
@@ -206,6 +212,9 @@ const floatTypeHandler = (attrs) => {
   assertRootAttrs(attrs)
   return (value) => {
     assertFloat(value, attrs)
+    if (typeof attrs.resolve === 'function') {
+      return attrs.resolve(value)
+    }
     return Number(value)
   }
 }

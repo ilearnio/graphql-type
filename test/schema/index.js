@@ -8,6 +8,9 @@ const IntInputType = require('./types/IntInputType')
 const FloatInputType = require('./types/FloatInputType')
 const IntOutputType = require('./types/IntOutputType')
 const IntBiDirectionalType = require('./types/IntBiDirectionalType')
+const StringBiDirectionalWithResolver = require('./types/StringBiDirectionalWithResolver')
+const IntBiDirectionalWithResolver = require('./types/IntBiDirectionalWithResolver')
+const FloatBiDirectionalWithResolver = require('./types/FloatBiDirectionalWithResolver')
 
 module.exports = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -47,6 +50,26 @@ module.exports = new GraphQLSchema({
         type: IntBiDirectionalType,
         args: { int: { type: IntBiDirectionalType } },
         resolve: (_, { int }) => 100 - int
+      },
+
+      //
+      // For testing type "resolve"
+      //
+
+      testStringBiDirectionalWithResolverType: {
+        type: StringBiDirectionalWithResolver,
+        args: { string: { type: StringBiDirectionalWithResolver } },
+        resolve: (_, { string }) => `queryResolver: (${string})`
+      },
+      testIntBiDirectionalWithResolverType: {
+        type: IntBiDirectionalWithResolver,
+        args: { int: { type: IntBiDirectionalWithResolver } },
+        resolve: (_, { int }) => int * 10
+      },
+      testFloatBiDirectionalWithResolverType: {
+        type: FloatBiDirectionalWithResolver,
+        args: { float: { type: FloatBiDirectionalWithResolver } },
+        resolve: (_, { float }) => float * 10
       }
     }
   })

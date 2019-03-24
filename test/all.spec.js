@@ -2,6 +2,7 @@
 
 const { AssertionError } = require('assert')
 const { expect } = require('chai')
+const { stubConsoleOnBeforeEach } = require('./utils/console')
 const { graphql } = require('graphql')
 const schema = require('./schema')
 const { createIntType } = require('..')
@@ -125,17 +126,30 @@ describe('Output-only validation direction', function () {
 })
 
 describe('Bi-directional validation', function () {
-  it('should validate input', async () => {
-    result = await query(`{ testIntBiDirectionalType(int: 9) }`)
-    expect(result.data).to.equal(undefined)
-    expect(result.errors[0].message).to.match(/min error$/)
+  context('when has input "min" error', () => {
+    it('should validate input', async () => {
+      result = await query(`{ testIntBiDirectionalType(int: 9) }`)
+      expect(result.data).to.equal(undefined)
+      expect(result.errors[0].message).to.match(/min error$/)
+    })
   })
 
-  it('should always return value, even on output validation error', async () => {
-    result = await query(`{ testIntBiDirectionalType(int: 91) }`)
-    expect(result.data.testIntBiDirectionalType).to.equal(9)
-    // TODO: currently error is only logged to terminal
-    // expect(result.errors[0].message).to.match(/min error$/)
+  context('when has output "min" error', () => {
+    const consoleStubbed = stubConsoleOnBeforeEach(['error'])
+
+    it('should always return value, even on output validation error', async () => {
+      result = await query(`{ testIntBiDirectionalType(int: 91) }`)
+      expect(result.data.testIntBiDirectionalType).to.equal(9)
+      // TODO: currently error is only logged to terminal
+      // expect(result.errors[0].message).to.match(/min error$/)
+    })
+
+    it('calls console.error', async () => {
+      result = await query(`{ testIntBiDirectionalType(int: 91) }`)
+      expect(consoleStubbed.error.callCount).to.eq(1)
+      expect(consoleStubbed.error.firstCall.args).to.have.lengthOf(1)
+      expect(consoleStubbed.error.firstCall.args[0]).to.have.property('message', 'min error')
+    })
   })
 })
 
@@ -150,11 +164,53 @@ describe('Type creators', function () {
   })
 })
 
-describe('Other', function () {
+describe('Query variables', function () {
   it('should validate passed variable', async () => {
     result = await query(`query ($int: IntInputType) { testIntInputType(int: $int) }`, { int: 9 })
     expect(result.errors[0].message).to.match(/min error$/)
     result = await query(`query ($int: IntInputType) { testIntInputType(int: $int) }`, { int: 60 })
     expect(result.data.testIntInputType).to.equal('OK')
+  })
+})
+
+describe('Value resolver', () => {
+  describe('#createStringType', async () => {
+    let result
+    beforeEach(async () => {
+      result = await query(`query ($string: StringBiDirectionalWithResolver) {
+        testStringBiDirectionalWithResolverType(string: $string)
+      }`, { string: 'passed-arg' })
+    })
+
+    it('resolves "passed-arg" that was modified by input type resolver, query resolver and output type resolver', () => {
+      expect(result.data.testStringBiDirectionalWithResolverType)
+        .to.equal('typeResolver: (queryResolver: (typeResolver: (passed-arg)))')
+    })
+  })
+
+  describe('#createIntType', async () => {
+    let result
+    beforeEach(async () => {
+      result = await query(`query ($int: IntBiDirectionalWithResolver) {
+        testIntBiDirectionalWithResolverType(int: $int)
+      }`, { int: 100 })
+    })
+
+    it('resolves value that was modified by input type resolver, query resolver and output type resolver', () => {
+      expect(result.data.testIntBiDirectionalWithResolverType).to.equal(4000) // 100 * 2 * 10 * 2
+    })
+  })
+
+  describe('#createFloatType', async () => {
+    let result
+    beforeEach(async () => {
+      result = await query(`query ($float: FloatBiDirectionalWithResolver) {
+        testFloatBiDirectionalWithResolverType(float: $float)
+      }`, { float: 100.22 })
+    })
+
+    it('resolves value that was modified by input type resolver, query resolver and output type resolver', () => {
+      expect(result.data.testFloatBiDirectionalWithResolverType).to.equal(4008.8) // 100.22 * 2 * 10 * 2
+    })
   })
 })
