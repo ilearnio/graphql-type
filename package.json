@@ -7,9 +7,9 @@
     "email": "artnikpro@gmail.com"
   },
   "scripts": {
-    "test": "npm run lint && npm run testonly",
-    "testonly": "NODE_ENV=test mocha test/all.spec.js",
-    "testonly-watch": "NODE_ENV=test mocha -w test/all.spec.js",
+    "test": "npm run lint && npm run unit",
+    "unit": "NODE_ENV=test mocha test/all.spec.js",
+    "unit-watch": "NODE_ENV=test mocha -w test/all.spec.js",
     "lint": "standard ."
   },
   "bugs": {
